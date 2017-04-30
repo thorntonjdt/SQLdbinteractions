@@ -1,0 +1,80 @@
+* {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+
+body {
+  margin: 0;
+  background-color: #222222;
+}
+
+#addForm {
+  text-align: center;
+  background-color: #222222;
+  padding-top: 1.5em;
+  color: white;
+  float: left;
+  height: 100%;
+  width: 18vw;
+}
+
+h4 {
+  margin-top: 2em;
+  margin-bottom: 1.2em;
+}
+
+#error-msg {
+  opacity: 0;
+  color: red;
+}
+#tracker {
+  margin-top: -1vh;
+  background-image: url('/bg.jpg');
+  background-size: 100% auto;
+  float: right;
+  width: 80vw;
+  background-color: blue;
+  height: 101vh;
+}
+
+#list {
+  margin: 0 auto;
+  text-align: center;
+  border-spacing: 0;
+}
+
+#container {
+  background-color: rgba(230,230,230,0.7);
+  width: 36em;
+  margin: 2em auto;
+  padding: 1em 0;
+  border-radius: 1em;
+}
+
+.deleteBtn {
+  cursor: pointer;
+  position: absolute;
+}
+
+th {
+  padding-bottom: 5px;
+}
+td {
+  color: white;
+}
+th, td {
+  width: 6em;
+}
+
+td:nth-child(n+2) {
+  border-left: 1px solid black;
+}
+tr:nth-child(2n+2) {
+  background-color: #333333;
+}
+tr:nth-child(2n+3) {
+  background-color: #666666;
+}

@@ -1,0 +1,143 @@
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+
+// ->Add button functionality
+  document.getElementById('addWorkout').addEventListener('click', function(event){
+    /*
+      Validate form inputs, open async request with server,
+      send inputs to database,
+      add workout to table if successfull
+    */
+
+    var input = getInputs();
+    for(var prop in input){       // validate inputs
+      if(input[prop] == ""){
+        document.getElementById('error-msg').style.opacity = 1;
+        return;
+      }
+    }
+    var req = new XMLHttpRequest();
+    req.open('POST', 'http://localhost:3000/', true);
+    req.setRequestHeader("Content-Type", "application/json");
+    req.addEventListener('load',function(){
+      if(req.status >= 200 && req.status < 400){
+        var response = JSON.parse(req.responseText);
+        var newWorkout = document.createElement('tr');
+
+        //Fill new row with form input
+        for(var prop in input){
+            var info = document.createElement('td');
+            info.textContent = input[prop];
+            newWorkout.appendChild(info);
+        }
+        //Add hidden DB id (pre-condition for delete button)
+        var rowId = document.createElement('td');
+        rowId.textContent = response.id;
+        rowId.style.visibility = "hidden";
+        rowId.style.position = "absolute";
+        newWorkout.appendChild(rowId);
+        //Add delete button and clear form
+        addDeleteBtn(newWorkout);
+        clearFormFields();
+      } else {
+        console.log("Error in network request: " + req.statusText);
+      }});
+      req.send(JSON.stringify(input));
+      event.preventDefault();
+  });
+});
+
+function getInputs(){
+  var values = {
+   name: null,
+   reps: null,
+   weight: null,
+   date: null,
+   lbs: null
+ };
+ values.name = document.getElementById('workout').value;
+ values.reps = document.getElementById('reps').value;
+ values.weight = document.getElementById('weight').value;
+ values.date = document.getElementById('date').value;
+ if(document.getElementById('lbs').checked){
+   values.lbs = true;
+ } else {
+   values.lbs = false;
+ }
+ return values;
+}
+
+function addDeleteBtn(e){
+  var deleteBtn = document.createElement('img');
+  deleteBtn.src = "/delete.png";
+  deleteBtn.classList.add('deleteBtn');
+  e.appendChild(deleteBtn);
+  document.getElementById('list').appendChild(e);
+
+  //Make delete button send hidden workout id to server and clear from table
+  deleteBtn.addEventListener('click', function(event){
+    var req = new XMLHttpRequest();
+    var payload = { rowId: null};
+    payload.rowId = event.target.previousSibling.textContent;
+    req.open('POST', 'http://localhost:3000/delete', true);
+    req.setRequestHeader("Content-Type", "application/json");
+    req.addEventListener('load',function(){
+      if(req.status >= 200 && req.status < 400){
+        var selectedRow = event.target.parentNode;
+        selectedRow.parentNode.removeChild(selectedRow);
+        event.preventDefault();
+      } else {
+        console.log("Error in network request: " + req.statusText);
+      }
+    });
+    req.send(JSON.stringify(payload));
+    event.preventDefault();
+  });
+}
+function clearFormFields(){
+  var elements = document.getElementsByTagName("input");
+  for (var i=0; i < elements.length; i++) {
+    if (elements[i].type == "text" || elements[i].type == "number" || elements[i].type == "date") {
+      elements[i].value = "";
+    }
+  }
+  document.getElementById('error-msg').style.opacity = 0;
+}
+</script>
+<div id="addForm">
+  <h4>Workout</h4>
+  <input type="text" name="workout" id="workout" />
+  <h4>Reps</h4>
+  <input type="number" name="reps" id="reps"  />
+  <h4>Weight</h4>
+  <input type="number" name="reps" id="weight"  /><br />
+  <input type="radio" name="lbs" id="lbs" value="Lbs"> lb </input>
+  <input type="radio" name="lbs" id="kg" value="Kg"> kg </input>
+  <h4>Date</h4>
+  <input type="date" name="reps" id="date"  /><br />
+  <input type="submit" value="Add" id="addWorkout" style="margin-top: 2em;"/>
+  <h4 id="error-msg">All fields are required!</h4>
+</div>
+<div id="tracker">
+  <div id="container">
+  <table id="list">
+    <tr id="header">
+      <th>
+        Workout
+      </th>
+      <th>
+        Reps
+      </th>
+      <th>
+        Weight
+      </th>
+      <th>
+        Date
+      </th>
+      <th>
+        Lbs
+      </th>
+    </tr>
+  </table>
+</div>
+</div>
